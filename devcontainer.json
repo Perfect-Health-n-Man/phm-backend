@@ -1,0 +1,7 @@
+{
+  "name": "Flask API Server (Python 3.11)",
+  "dockerFile": "Dockerfile.dev",
+  "forwardPorts": [
+    5000
+  ],
+}
