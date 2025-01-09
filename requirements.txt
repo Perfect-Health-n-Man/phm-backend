@@ -1,6 +1,7 @@
 Flask
 pre-commit
 black
+python-dotenv==1.0.1
 
 # langchain
 langchain==0.2.14

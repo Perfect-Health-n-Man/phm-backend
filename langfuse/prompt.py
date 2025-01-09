@@ -2,17 +2,18 @@
 import requests
 import os
 from typing import Optional
+import config
 
 def get_prompt(
         prompt_name: str,
         version: Optional[int] = None,
         label: Optional[str] = None):
     # エンドポイントURL
-    url = f"{os.environ['LANGFUSE_HOST']}/api/public/v2/prompts/{prompt_name}"
+    url = f"{config.LANGFUSE_HOST}/api/public/v2/prompts/{prompt_name}"
 
     # 認証情報
-    username = os.environ['LANGFUSE_PUBLIC_KEY']
-    password = os.environ['LANGFUSE_SECRET_KEY']
+    username = config.LANGFUSE_PUBLIC_KEY
+    password = config.LANGFUSE_SECRET_KEY
 
     # クエリパラメータの設定
     params = {}
