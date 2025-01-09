@@ -1,5 +1,4 @@
-# langfuse
-import requests
+from requests import get, exceptions, models
 import os
 from typing import Optional
 import config
@@ -7,7 +6,7 @@ import config
 def get_prompt(
         prompt_name: str,
         version: Optional[int] = None,
-        label: Optional[str] = None):
+        label: Optional[str] = None) -> models.Response|None:
     # エンドポイントURL
     url = f"{config.LANGFUSE_HOST}/api/public/v2/prompts/{prompt_name}"
 
@@ -29,7 +28,7 @@ def get_prompt(
 
     try:
         # GETリクエストの実行
-        response = requests.get(
+        response = get(
             url=url,
             params=params,
             headers=headers,
@@ -39,11 +38,11 @@ def get_prompt(
         # レスポンスの確認
         if 200 <= response.status_code < 300:
             print("リクエスト成功")
-            return response.json()
+            return response
         else:
             print(f"エラー: ステータスコード {response.status_code}")
-            return response.json()
+            return response
 
-    except requests.exceptions.RequestException as e:
+    except exceptions.RequestException as e:
         print(f"リクエスト中にエラーが発生しました: {e}")
         return None
