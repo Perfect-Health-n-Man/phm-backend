@@ -1,15 +1,15 @@
-from datetime import datetime
-
 import config
 
 from langchain_core.messages import HumanMessage
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
 from langfuse import Langfuse
-from langfuse.callback import CallbackHandler
-from langchain_core.prompts import ChatPromptTemplate
+from datetime import datetime
+
+from ai.model import get_llm_model_and_callback
 
 langfuse = Langfuse()
-langfuse_callback_handler = CallbackHandler()
 
 def create_tasks(user_info):
     langfuse_prompt = langfuse.get_prompt(name="createDailyTasks", label="production")
@@ -17,18 +17,22 @@ def create_tasks(user_info):
         langfuse_prompt.get_langchain_prompt(),
         metadata={"langfuse_prompt": langfuse_prompt},
     )
+
+    model, langfuse_handler = get_llm_model_and_callback()
+    chain = langchain_prompt | model | StrOutputParser()
+
     example_input = {
-        "Weight": "60kg",
+        "Weight": "70kg",
         "Height": "170cm",
-        "Age": "30",
+        "Age": "26",
         "DatetimeNow": datetime.now(),
         "Deadline": "今年の3月",
         "Sex": "男",
-        "Goal": "55kg",
+        "Goal": "65kg",
         "Name": "颯太",
     }
 
-    return langchain_prompt.invoke(input=example_input)
+    return chain.invoke(input=example_input, config={"callbacks":[langfuse_handler]})
 
 def get_tasks(user_id: str):
     return ""

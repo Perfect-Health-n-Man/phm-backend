@@ -4,13 +4,13 @@ black
 python-dotenv==1.0.1
 
 # langchain
-langchain==0.2.14
-langchain-community==0.2.12
-langchain-core==0.2.33
-langchain-google-community==1.0.7
-langchain-google-firestore==0.3.0
-langchain-google-genai==1.0.8
-langchain-google-vertexai==1.0.5
+langchain
+langchain-community
+langchain-core
+langchain-google-community
+langchain-google-firestore
+langchain-google-genai
+langchain-google-vertexai
 
 # langfuse
 langfuse==2.56.2

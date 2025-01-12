@@ -3,7 +3,7 @@ load_dotenv()
 
 import os
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 LANGFUSE_HOST = os.getenv('LANGFUSE_HOST')
 LANGFUSE_PUBLIC_KEY = os.getenv('LANGFUSE_PUBLIC_KEY')
