@@ -1,13 +1,12 @@
 import config
+from ai.model import get_llm_model_and_callback
 
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
 from langfuse import Langfuse
 from datetime import datetime
-
-from ai.model import get_llm_model_and_callback
+from google.cloud import firestore
 
 langfuse = Langfuse()
 
@@ -19,20 +18,12 @@ def create_tasks(user_info):
     )
 
     model, langfuse_handler = get_llm_model_and_callback()
-    chain = langchain_prompt | model | StrOutputParser()
+    output_parser = StrOutputParser()
+    chain = langchain_prompt | model |output_parser
 
-    example_input = {
-        "Weight": "70kg",
-        "Height": "170cm",
-        "Age": "26",
-        "DatetimeNow": datetime.now(),
-        "Deadline": "今年の3月",
-        "Sex": "男",
-        "Goal": "65kg",
-        "Name": "颯太",
-    }
+    user_info["datetimeNow"] = datetime.now()
 
-    return chain.invoke(input=example_input, config={"callbacks":[langfuse_handler]})
+    return chain.invoke(input=user_info, config={"callbacks":[langfuse_handler]})
 
 def get_tasks(user_id: str):
     return ""
@@ -41,4 +32,7 @@ def update_tasks(): ...
 
 def delete_tasks(): ...
 
-print(create_tasks("a"))
+db = firestore.Client()
+user_ref = db.collection("users").document('user-id').get()
+user_info = user_ref.to_dict()["user_info"]
+print(create_tasks(user_info))
