@@ -1,10 +1,12 @@
-FROM python:3.11.0
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:489.0.0-stable
+
+RUN apt update && apt -y install python3.11 python3-pip
 
 # requirements.txt をコピー
 COPY requirements.txt requirements.txt
 
 # requirements.txt をインストール
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
 # コマンドを実行
 CMD ["/bin/bash"]
