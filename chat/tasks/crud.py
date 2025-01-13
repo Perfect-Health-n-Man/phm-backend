@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
+
 from ai.model import get_llm_model_and_callback
 from ai.prompt import get_prompt
 from langchain_core.output_parsers import StrOutputParser
