@@ -18,6 +18,7 @@ async def get_user_info(db: firestore.AsyncClient, user_id: str) -> dict:
 async def create_tasks(fs_client: firestore.AsyncClient, lf_client: Langfuse, user_id: str) -> str:
     langchain_prompt = get_prompt(lf_client, "createDailyTasks")
     user_info = await get_user_info(fs_client, user_id)
+
     model, langfuse_handler = get_llm_model_and_callback()
     output_parser = StrOutputParser()
     chain = langchain_prompt | model | output_parser
