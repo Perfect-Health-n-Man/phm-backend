@@ -11,18 +11,20 @@ import asyncio
 
 async def get_user_info(db: firestore.AsyncClient, user_id: str) -> dict:
     user_ref = await db.collection("users").document(user_id).get()
+    t = db.collection("users").document()
+    print(t, t.id)
     user_info = user_ref.to_dict()["user_info"]
     user_info["datetimeNow"] = datetime.now()
     return user_info
 
 async def create_tasks(fs_client: firestore.AsyncClient, lf_client: Langfuse, user_id: str) -> str:
-    langchain_prompt = get_prompt(lf_client, "createDailyTasks")
+    # langchain_prompt = get_prompt(lf_client, "createDailyTasks")
     user_info = await get_user_info(fs_client, user_id)
 
-    model, langfuse_handler = get_llm_model_and_callback()
-    output_parser = StrOutputParser()
-    chain = langchain_prompt | model | output_parser
-    return chain.invoke(input=user_info, config={"callbacks":[langfuse_handler]})
+    # model, langfuse_handler = get_llm_model_and_callback()
+    # output_parser = StrOutputParser()
+    # chain = langchain_prompt | model | output_parser
+    # return chain.invoke(input=user_info, config={"callbacks":[langfuse_handler]})
 
 def get_tasks(): ...
 
