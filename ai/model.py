@@ -1,9 +1,11 @@
+from typing import Optional
+
+from langchain_core.messages import AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langfuse.callback import CallbackHandler
 
-langfuse_callback_handler = CallbackHandler()
-
 def get_llm_model_and_callback():
+    langfuse_callback_handler = CallbackHandler()
     return ChatGoogleGenerativeAI(
         model="gemini-2.0-flash-exp",
         temperature=0,
