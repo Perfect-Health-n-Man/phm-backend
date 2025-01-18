@@ -1,42 +1,32 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 from ai.model import get_llm_model_and_callback
 from ai.prompt import get_prompt
+from firestore.crud import get_user
+
 from langchain_core.output_parsers import StrOutputParser
-from langfuse import Langfuse
 from datetime import datetime
 from google.cloud import firestore
-import asyncio
+from langfuse import Langfuse
 
-async def get_user_info(db: firestore.AsyncClient, user_id: str) -> dict:
-    user_ref = await db.collection("users").document(user_id).get()
-    t = db.collection("users").document()
-    print(t, t.id)
+async def get_user_info(fs_aclient: firestore.AsyncClient, user_id: str) -> dict:
+    doc_ref = get_user(fs_aclient, user_id)
+    user_ref = await doc_ref.get()
     user_info = user_ref.to_dict()["user_info"]
     user_info["datetimeNow"] = datetime.now()
     return user_info
 
-async def create_tasks(fs_client: firestore.AsyncClient, lf_client: Langfuse, user_id: str) -> str:
-    # langchain_prompt = get_prompt(lf_client, "createDailyTasks")
-    user_info = await get_user_info(fs_client, user_id)
+async def create_tasks(fs_aclient: firestore.AsyncClient, lf_client: Langfuse, user_id: str) -> str:
+    get_user_info_task = get_user_info(fs_aclient, user_id)
+    langchain_prompt = get_prompt(lf_client, "createDailyTasks")
 
-    # model, langfuse_handler = get_llm_model_and_callback()
-    # output_parser = StrOutputParser()
-    # chain = langchain_prompt | model | output_parser
-    # return chain.invoke(input=user_info, config={"callbacks":[langfuse_handler]})
+    model, langfuse_handler = get_llm_model_and_callback()
+    output_parser = StrOutputParser()
+    chain = langchain_prompt | model | output_parser
+
+    user_info = await get_user_info_task
+    return await chain.ainvoke(input=user_info, config={"callbacks":[langfuse_handler]})
 
 def get_tasks(): ...
 
 def update_tasks(): ...
 
 def delete_tasks(): ...
-
-async def main():
-    fs_client = firestore.AsyncClient()
-    lf_client = Langfuse()
-    result = await create_tasks(fs_client, lf_client, "user-id")
-    print(result)
-
-if __name__ == "__main__":
-    asyncio.run(main())
