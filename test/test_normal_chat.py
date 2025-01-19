@@ -1,9 +1,8 @@
 import pytest
-
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, AIMessage
-
 load_dotenv()
+
+from langchain_core.messages import HumanMessage, AIMessage
 from google.cloud import firestore
 
 from chat.normal.factory import ChatFactory
@@ -16,7 +15,7 @@ fs_client = firestore.Client()
 history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
-async def test_create_tasks():
+async def test_create_chat():
     # history.add_message(HumanMessage(content="トマトはどうかな？"))
     normal_chat = ChatFactory(history)
     result = await normal_chat.create_ans()
