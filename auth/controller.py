@@ -1,23 +1,17 @@
-from flask import Blueprint, request, jsonify
-from auth.service import *
-auth_bp = Blueprint('auth', __name__)
-auth_service = AuthService()
+from flask import request,g
+from auth.service import verify_token
 
-@auth_bp.route('/signup', methods=['POST'])
-def signup():
-    request_data = request.get_json()
-    email = request_data['email']
-    password = request_data['password']
-    return auth_service.signup(email, password)
-@auth_bp.route('/signin', methods=['POST'])
-def signin():
-    request_data = request.get_json()
-    email = request_data['email']
-    password = request_data['password']
-    return auth_service.signin(email, password)
+def authenticate_request():
+    # リクエストヘッダーからトークンを取得
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        raise Exception("Authorization header is missing or invalid")
 
-@auth_bp.route('/signout', methods=['POST'])
-def signout():
-    request_data = request.get_json()
-    email = request_data['email']
-    return auth_service.signout(email)
+    # トークンの検証
+    id_token = auth_header.split('Bearer ')[1]
+    user_id = verify_token(id_token)
+    if not user_id:
+        raise Exception("Invalid token")
+
+    # ユーザーIDをリクエストコンテキストに保存
+    g.user_id = user_id

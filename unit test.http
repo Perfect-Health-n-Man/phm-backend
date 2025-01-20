@@ -1,0 +1,23 @@
+
+###
+POST http://127.0.0.1:5000/users/nakanakatest/info
+Content-Type: application/json
+
+{
+  "name": "なかむら",
+  "email": "nakamura.sota@cloud-ace.jp",
+  "gender": "男",
+  "birthday": "1998-07-31",
+  "height": 164,
+  "weight": 60,
+  "goals": [
+    "3ヶ月以内に５キロ痩せる",
+    "体脂肪率を標準値以下にする"
+  ]
+}
+
+###
+### GET request to example server
+GET http://127.0.0.1:5000/users/nakanakatest/info
+
+###

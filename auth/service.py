@@ -1,12 +1,9 @@
-class AuthService:
-    def signup(self, email, password):
-        # TODO サインアップのコードを書く
-        return "Sign Up"
+from firebase_admin import auth
 
-    def signin(self, email, password):
-        # TODO サインインのコードを書く
-        return "Sign In"
-
-    def signout(self, email):
-        # TODO サインアウトのコードを書く
-        return "Sign In"
+def verify_token(id_token):
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        return decoded_token['uid']
+    except Exception as e:
+        print(f"Token verification failed: {e}")
+        return None
