@@ -13,8 +13,7 @@ langchain
 langchain-community
 langchain-core
 langchain-google-community
-langchain-google-genai
-langchain-google-vertexai
+google-cloud-discoveryengine
 
 # langfuse
 langfuse==2.56.2
