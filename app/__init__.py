@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from firebase_admin import initialize_app
 initialize_app()
 from quart import Quart
-from ai.prompt import get_prompt_on_startup
+from app.ai.prompt import get_prompt_on_startup
 from app.brefor_request import register_before_request
 
 
