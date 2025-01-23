@@ -1,12 +1,12 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from ai.prompt import get_langchain_prompt
+from app.ai.prompt import get_langchain_prompt
 from datetime import datetime
 from google.cloud import firestore
 
 from .model import Tasks
-from ai.model import get_llm_model_and_callback
+from app.ai.model import get_llm_model_and_callback
 
 
 class TasksFactory:

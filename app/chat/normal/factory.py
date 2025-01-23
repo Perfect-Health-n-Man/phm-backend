@@ -1,11 +1,11 @@
 from langchain_core.prompts import ChatPromptTemplate
 
-from ai.prompt import get_langchain_prompt
+from app.ai.prompt import get_langchain_prompt
 from datetime import datetime
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
 from .model import AIans
-from ai.model import get_llm_model_and_callback
+from app.ai.model import get_llm_model_and_callback
 
 
 class ChatFactory:
