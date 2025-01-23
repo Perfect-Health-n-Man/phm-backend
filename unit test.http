@@ -2,11 +2,10 @@ POST http://localhost:5000/chats
 Content-Type: application/json
 
 {
-    "message": "おすすめのサイトやアプリを教えて",
-    "user_id": "user_123"
+  "message": "冷静に考えるとドラゴンボールってヤジロベエが戦犯だよなぁ"
 }
 ###
-GET http://localhost:5000/chats?pages=2
+GET http://localhost:5000/chats
 
 ###
 
