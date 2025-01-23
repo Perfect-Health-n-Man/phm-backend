@@ -2,12 +2,9 @@ import pytest
 from dotenv import load_dotenv
 load_dotenv()
 
-from langchain_core.messages import HumanMessage, AIMessage
-from google.cloud import firestore
-
-from chat.normal.factory import ChatFactory
-from chat.normal.model import AIans
-from firestore import firestore_crud
+from app.chat.normal.factory import ChatFactory
+from app.chat.normal.model import AIans
+from app.firestore import firestore_service
 
 # fs_aclient = firestore.AsyncClient()
 # doc_ref = firestore_crud.get_user(fs_aclient, "user-id")

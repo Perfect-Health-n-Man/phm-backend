@@ -1,8 +1,8 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from chat.normal.factory import ChatFactory
-from chat.normal.model import AIans
+from app.chat.normal.factory import ChatFactory
+
 
 async def chat(history: FirestoreChatMessageHistory, user_message: str) -> str:
     history.add_message(HumanMessage(content=user_message))
