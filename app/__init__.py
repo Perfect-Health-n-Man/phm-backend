@@ -13,4 +13,6 @@ def create_app():
     get_prompt_on_startup()
     from .users import users_bp
     app.register_blueprint(users_bp, url_prefix="/users")
+    from .chat import chat_bp
+    app.register_blueprint(chat_bp, url_prefix="/chats")
     return app
