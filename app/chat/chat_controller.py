@@ -10,7 +10,6 @@ async def handle_chat():
         data = await request.get_json()
         user_message = data.get('message')
         uid = g.user.id
-
         if not user_message:
             return {"error": "message is required"}, 400
 

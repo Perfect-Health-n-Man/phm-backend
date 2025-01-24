@@ -2,10 +2,10 @@ POST http://localhost:5000/chats
 Content-Type: application/json
 
 {
-  "message": "冷静に考えるとドラゴンボールってヤジロベエが戦犯だよなぁ"
+  "message": "ジョギングをする際の、おすすめのヲーミングアップを教えて"
 }
 ###
-GET http://localhost:5000/chats
+GET http://localhost:5000/chats?pages=2
 
 ###
 
