@@ -30,6 +30,6 @@ class RagFactory:
 
         chain = prompt | model.with_structured_output(output_parser)
         return await chain.ainvoke(
-            input={"datetimeNow": datetime.now},
+            input={"datetimeNow": datetime().now},
             config={"callbacks":[langfuse_handler]}
         )

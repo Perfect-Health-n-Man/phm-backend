@@ -1,33 +1,33 @@
-from langchain_core.prompts import ChatPromptTemplate
-
-from ai.prompt import get_langchain_prompt
 from datetime import datetime
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from .model import AIans
-from ai.model import get_llm_model_and_callback
+from ai.factory import BaseChatFactory
+from .model import AiAns
 
 
-class ChatFactory:
-    def __init__(self, history: FirestoreChatMessageHistory) -> None:
-        self.history = history
+class NormalChatFactory(BaseChatFactory):
+    def __init__(self,
+                 history: FirestoreChatMessageHistory,
+                 user_message: str,
+                 prompt_name: str
+        ) -> None:
+        super().__init__(history, prompt_name, AiAns, user_message)
 
-    async def create_ans(self) -> AIans:
-        get_chat_history_task = self.history.aget_messages()
-        system_prompt = get_langchain_prompt("answerQuestions")
-
-        model, langfuse_handler = get_llm_model_and_callback()
-        output_parser = AIans
-
-        messages = await get_chat_history_task
-        messages = [system_prompt] + messages
-        prompt = ChatPromptTemplate.from_messages(messages)
+    async def create_ans(self) -> AiAns:
+        add_human_message_task = self.add_user_message()
 
         chain = (
-                prompt
-                | model.with_structured_output(output_parser)
+                self.prompt
+                | self.model.with_structured_output(self.output_parser)
         )
-        return await chain.ainvoke(
-            input={"datetimeNow": datetime.now},
-            config={"callbacks":[langfuse_handler]}
+
+        return await self.add_ai_message(
+            chain,
+            inputs = {
+                "datetimeNow": datetime.now(),
+                "retriever": "",
+                "chat_history": self.history.messages,
+                "question": self.user_message
+            },
+            add_human_message_task=add_human_message_task
         )
