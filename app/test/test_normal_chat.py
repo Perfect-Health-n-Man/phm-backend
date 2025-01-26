@@ -4,9 +4,9 @@ load_dotenv()
 
 from google.cloud import firestore
 
-from chat.normal.factory import NormalChatFactory
-from chat.normal.model import AiAns
-from firestore import firestore_crud
+from app.chat.normal.factory import NormalChatFactory
+from app.chat.normal.model import AiAns
+from app.firestore import firestore_crud
 
 fs_client = firestore.Client()
 history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")

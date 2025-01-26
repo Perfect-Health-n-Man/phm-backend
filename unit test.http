@@ -1,7 +1,18 @@
+POST http://localhost:5000/chats
+Content-Type: application/json
+
+{
+  "message": "ジョギングをする際の、おすすめのヲーミングアップを教えて"
+}
+###
+GET http://localhost:5000/chats?pages=2
 
 ###
-POST http://127.0.0.1:5000/users/nakanakatest/info
+
+###
+POST http://127.0.0.1:5000/users/info
 Content-Type: application/json
+Authorization: Bearer
 
 {
   "name": "なかむら",

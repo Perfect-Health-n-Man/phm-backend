@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 from google.cloud import firestore
 
-from chat.tasks.factory import TasksFactory
-from chat.tasks.model import Tasks
-from firestore import firestore_crud
+from app.chat.tasks.factory import TasksFactory
+from app.chat.tasks.model import Tasks
+from app.firestore import firestore_service
 
 fs_aclient = firestore.AsyncClient()
 doc_ref = firestore_crud.get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")

@@ -1,12 +1,10 @@
-import pytest
-
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 from google.cloud import firestore
 
-from firestore import firestore_crud
+from app.firestore import firestore_service
 
-fs_client = firestore.Client()
-fs_aclient = firestore.AsyncClient()
+fs_client = firestore_service.Client()
+fs_aclient = firestore_service.AsyncClient()
 
 def test_get_chat_history():
     result = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")

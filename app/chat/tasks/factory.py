@@ -1,6 +1,6 @@
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from ai.factory import BaseChatFactory
+from app.ai.factory import BaseChatFactory
 from datetime import datetime
 from google.cloud import firestore
 

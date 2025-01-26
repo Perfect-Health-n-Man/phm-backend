@@ -1,7 +1,7 @@
 from datetime import datetime
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from ai.factory import BaseChatFactory
+from app.ai.factory import BaseChatFactory
 from .model import AiAns
 
 
