@@ -6,12 +6,13 @@ from google.cloud import firestore
 
 from app.chat.tasks.factory import TasksFactory
 from app.chat.tasks.model import Tasks
-from app.firestore import firestore_service
+from app.chat.chat_repository import get_chat_history
+from app.firestore.firestore_service import get_user
 
 fs_aclient = firestore.AsyncClient()
-doc_ref = firestore_service.get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
+doc_ref = get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
 fs_client = firestore.Client()
-history = firestore_service.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history("WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_create_tasks():

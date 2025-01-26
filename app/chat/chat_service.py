@@ -1,25 +1,15 @@
-from datetime import datetime
+from typing import Any
 
-from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
 from app.chat.chat_repository import get_chat_history
 from app.chat.normal.factory import NormalChatFactory
 
-async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_message: str) -> str:
+async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_message: str) -> Any:
     try:
-        # 同期的に処理
-        history.add_message(HumanMessage(content=user_message, additional_kwargs={'datetime':datetime.now()}))
-
-        normal_chat = NormalChatFactory(history)
+        normal_chat = NormalChatFactory(history, user_message)
         result = await normal_chat.create_ans()
-        result_dict = result.model_dump()
-        content = result_dict.get("summary")
-
-        # 同期的に処理
-        history.add_messages([AIMessage(content=content, additional_kwargs={'datetime':datetime.now()})])
-
-        return content
+        return result
     except Exception as e:
         print(f"Error in store_and_respond_chat: {str(e)}")
         raise

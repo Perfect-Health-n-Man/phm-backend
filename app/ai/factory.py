@@ -1,4 +1,5 @@
 from asyncio import gather
+from datetime import datetime
 from typing import Any, Coroutine
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -32,7 +33,7 @@ class BaseChatFactory:
 
     async def add_user_message(self, ):
         self.history.load_messages()
-        return await self.history.aadd_messages([HumanMessage(content=self.user_message)])
+        return await self.history.aadd_messages([HumanMessage(content=self.user_message, additional_kwargs={'datetime':datetime.now()})])
 
     async def add_ai_message(
             self,
@@ -46,6 +47,6 @@ class BaseChatFactory:
         )
         _, ai_message = await gather(add_human_message_task, chain_invoke_task)
         ai_message_summary = ai_message.model_dump().get("summary")
-        self.history.add_message(AIMessage(content=ai_message_summary))
+        self.history.add_message(AIMessage(content=ai_message_summary, additional_kwargs={'datetime':datetime.now()}))
         return ai_message
 
