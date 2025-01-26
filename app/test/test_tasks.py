@@ -9,9 +9,9 @@ from app.chat.tasks.model import Tasks
 from app.firestore import firestore_service
 
 fs_aclient = firestore.AsyncClient()
-doc_ref = firestore_crud.get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
+doc_ref = firestore_service.get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
 fs_client = firestore.Client()
-history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = firestore_service.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_create_tasks():

@@ -6,10 +6,10 @@ from google.cloud import firestore
 
 from app.chat.normal.factory import NormalChatFactory
 from app.chat.normal.model import AiAns
-from app.firestore import firestore_crud
+from app.firestore.firestore_service import get_chat_history
 
 fs_client = firestore.Client()
-history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_create_chat():

@@ -4,12 +4,12 @@ load_dotenv()
 
 from google.cloud import firestore
 
-from chat.rag.factory import RagFactory
-from chat.rag.model import AiRagAns
-from firestore import firestore_crud
+from app.chat.rag.factory import RagFactory
+from app.chat.rag.model import AiRagAns
+from app.firestore.firestore_service import get_chat_history
 
 fs_client = firestore.Client()
-history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_rag():
