@@ -1,12 +1,11 @@
 from datetime import datetime
-
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
-
 from app.chat.chat_repository import get_chat_history
 from app.chat.normal.factory import ChatFactory
 
-async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_message: str) -> str:
+
+async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_message: str) -> str | None:
     try:
         # 同期的に処理
         history.add_message(HumanMessage(content=user_message, additional_kwargs={'datetime':datetime.now()}))
@@ -19,10 +18,11 @@ async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_mess
         # 同期的に処理
         history.add_messages([AIMessage(content=content, additional_kwargs={'datetime':datetime.now()})])
 
+        if content is None:
+            raise "Summary content is missing in 'store_and_respond_chat'"
         return content
-    except Exception as e:
-        print(f"Error in store_and_respond_chat: {str(e)}")
-        raise
+    except Exception as e :
+        raise e
 
 
 async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | None:
@@ -55,6 +55,5 @@ async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | No
         end = start + limit
 
         return filtered_messages[start:end]
-
-    except Exception:
-        return None
+    except Exception as e:
+        raise e
