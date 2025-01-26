@@ -16,7 +16,6 @@ async def test_rag():
     rag_chat = RagFactory(
         history,
         user_message="栄養価の高い野菜は？",
-        prompt_name="answerQuestions"
     )
     result = await rag_chat.create_ans()
     assert type(result) is AiRagAns

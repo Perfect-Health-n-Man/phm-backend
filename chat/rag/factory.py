@@ -18,9 +18,8 @@ class RagFactory(BaseChatFactory):
     def __init__(self,
                  history: FirestoreChatMessageHistory,
                  user_message: str,
-                 prompt_name: str
                  ) -> None:
-        super().__init__(history, prompt_name, AiRagAns, user_message)
+        super().__init__(history, "answerQuestions", AiRagAns, user_message)
         self.retriever = VertexAISearchRetriever(
             project_id=os.getenv("PROJECT_ID"),
             data_store_id=os.getenv("DATA_STORE_ID"),

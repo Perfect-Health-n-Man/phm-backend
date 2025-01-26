@@ -16,7 +16,6 @@ async def test_create_chat():
     normal_chat = NormalChatFactory(
         history,
         user_message="栄養価の高い野菜は？",
-        prompt_name="answerQuestions"
     )
     result = await normal_chat.create_ans()
     assert type(result) is AiAns

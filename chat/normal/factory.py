@@ -9,9 +9,8 @@ class NormalChatFactory(BaseChatFactory):
     def __init__(self,
                  history: FirestoreChatMessageHistory,
                  user_message: str,
-                 prompt_name: str
         ) -> None:
-        super().__init__(history, prompt_name, AiAns, user_message)
+        super().__init__(history, "answerQuestions", AiAns, user_message)
 
     async def create_ans(self) -> AiAns:
         add_human_message_task = self.add_user_message()
