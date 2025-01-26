@@ -17,15 +17,15 @@ class NormalChatFactory(BaseChatFactory):
         add_human_message_task = self.add_user_message()
 
         chain = (
-                self.prompt
-                | self.model.with_structured_output(self.output_parser)
+            self.prompt
+            | self.model.with_structured_output(self.output_parser)
         )
 
         return await self.add_ai_message(
             chain,
             inputs = {
-                "datetimeNow": datetime.now(),
-                "retriever": "",
+                "datetimeNow": datetime.now().isoformat(),
+                "context": "",
                 "chat_history": self.history.messages,
                 "question": self.user_message
             },

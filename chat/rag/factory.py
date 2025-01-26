@@ -1,35 +1,55 @@
 import os
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.chat_message_histories import FirestoreChatMessageHistory
+
+from langchain_core.runnables import RunnablePassthrough
 from langchain_google_community import VertexAISearchRetriever
+from datetime import datetime
+from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
-from ai.prompt import get_langchain_prompt
-from ai.model import get_llm_model_and_callback
+from ai.factory import BaseChatFactory
+from .model import AiRagAns
 
-class RagFactory:
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+
+class RagFactory(BaseChatFactory):
     retriever: VertexAISearchRetriever
-
-    def __init__(self, history: FirestoreChatMessageHistory) -> None:
-        self.history = history
+    def __init__(self,
+                 history: FirestoreChatMessageHistory,
+                 user_message: str,
+                 prompt_name: str
+                 ) -> None:
+        super().__init__(history, prompt_name, AiRagAns, user_message)
         self.retriever = VertexAISearchRetriever(
             project_id=os.getenv("PROJECT_ID"),
             data_store_id=os.getenv("DATA_STORE_ID"),
             max_documents=2,
+            max_extractive_answer_count=3,
+            get_extractive_answers=True,
         )
 
-    async def create_ans(self) -> AIans:
-        get_chat_history_task = self.history.aget_messages()
-        system_prompt = get_langchain_prompt("rag")
+    async def create_ans(self):
+        add_human_message_task = self.add_user_message()
 
-        model, langfuse_handler = get_llm_model_and_callback()
-        output_parser = AIans
+        chain = (
+            RunnablePassthrough.assign(
+                context=
+                (lambda x: x["question"])
+                | self.retriever
+                | format_docs
+            )
+            | self.prompt
+            | self.model.with_structured_output(self.output_parser)
+        )
 
-        messages = await get_chat_history_task
-        messages = [system_prompt] + messages
-        prompt = ChatPromptTemplate.from_messages(messages)
-
-        chain = prompt | model.with_structured_output(output_parser)
-        return await chain.ainvoke(
-            input={"datetimeNow": datetime().now},
-            config={"callbacks":[langfuse_handler]}
+        return await self.add_ai_message(
+            chain,
+            inputs = {
+                "input": self.user_message,
+                "datetimeNow": datetime.now().isoformat(),
+                "chat_history": self.history.messages,
+                "question": self.user_message
+            },
+            add_human_message_task=add_human_message_task
         )

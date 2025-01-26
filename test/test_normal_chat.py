@@ -2,15 +2,12 @@ import pytest
 from dotenv import load_dotenv
 load_dotenv()
 
-from langchain_core.messages import HumanMessage, AIMessage
 from google.cloud import firestore
 
 from chat.normal.factory import NormalChatFactory
 from chat.normal.model import AiAns
 from firestore import firestore_crud
 
-# fs_aclient = firestore.AsyncClient()
-# doc_ref = firestore_crud.get_user(fs_aclient, "user-id")
 fs_client = firestore.Client()
 history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
 
