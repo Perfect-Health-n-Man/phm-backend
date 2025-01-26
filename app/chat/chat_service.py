@@ -4,14 +4,14 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
 from app.chat.chat_repository import get_chat_history
-from app.chat.normal.factory import ChatFactory
+from app.chat.normal.factory import NormalChatFactory
 
 async def store_and_respond_chat(history: FirestoreChatMessageHistory, user_message: str) -> str:
     try:
         # 同期的に処理
         history.add_message(HumanMessage(content=user_message, additional_kwargs={'datetime':datetime.now()}))
 
-        normal_chat = ChatFactory(history)
+        normal_chat = NormalChatFactory(history)
         result = await normal_chat.create_ans()
         result_dict = result.model_dump()
         content = result_dict.get("summary")

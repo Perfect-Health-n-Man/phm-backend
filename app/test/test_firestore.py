@@ -3,13 +3,13 @@ from google.cloud import firestore
 
 from app.firestore import firestore_service
 
-fs_client = firestore_service.Client()
-fs_aclient = firestore_service.AsyncClient()
+fs_client = firestore.Client()
+fs_aclient = firestore.AsyncClient()
 
 def test_get_chat_history():
-    result = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+    result = firestore_service.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
     assert type(result) is FirestoreChatMessageHistory
 
 def test_get_user():
-    result = firestore_crud.get_user(fs_aclient, "user-id")
+    result = firestore_service.get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
     assert type(result) is firestore.AsyncDocumentReference

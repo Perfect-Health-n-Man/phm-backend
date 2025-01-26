@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
-class AiAns(BaseModel):
+class AiRagAns(BaseModel):
     cot: str = Field(description="COT thought process")
+    rag: str = Field(description="Documents referenced as RAG")
     summary: str = Field(description="Summary of Answers")
