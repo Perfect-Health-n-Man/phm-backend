@@ -6,10 +6,10 @@ from google.cloud import firestore
 
 from app.chat.rag.factory import RagFactory
 from app.chat.rag.model import AiRagAns
-from app.firestore.firestore_service import get_chat_history
+from app.chat.chat_repository import get_chat_history
 
 fs_client = firestore.Client()
-history = get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history("WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_rag():
