@@ -20,6 +20,7 @@ class NormalChatFactory(BaseChatFactory):
             | self.model.with_structured_output(self.output_parser)
         )
 
+
         return await self.add_ai_message(
             chain,
             inputs = {
