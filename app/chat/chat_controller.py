@@ -1,6 +1,4 @@
 from quart import request, g
-# from app.firestore.firestore_service import client
-from app.chat.chat_repository import get_chat_history
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp
 
@@ -13,11 +11,8 @@ async def handle_chat():
             return {"error": "user_id or message is empty"}, 400
 
         uid = g.user_id
-        history = get_chat_history(uid)
 
-        if history is None:
-            return {"error": "Failed to initialize chat history"}, 500
-        ai_response = await store_and_respond_chat(history, user_message)
+        ai_response = await store_and_respond_chat(uid, user_message)
 
         if not ai_response:
             return {"error": "Encountered an internal error while executing the 'store_and_respond_chat' function. "}, 500
