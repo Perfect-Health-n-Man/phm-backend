@@ -14,7 +14,9 @@ async def store_and_respond_chat(uid:str, user_message: str) -> Any:
 
         normal_chat = NormalChatFactory(history, user_message)
         result = await normal_chat.create_ans()
-        return result
+        result_dict = result.model_dump()
+        content = result_dict.get("answer")
+        return content
     except Exception as e:
         print(f"Error in store_and_respond_chat: {str(e)}")
         raise

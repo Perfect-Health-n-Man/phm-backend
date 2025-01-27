@@ -9,7 +9,7 @@ from app.chat.rag.model import AiRagAns
 from app.chat.chat_repository import get_chat_history
 
 fs_client = firestore.Client()
-history = get_chat_history("WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history("NBCciQVahlCczQUzAM9F")
 
 @pytest.mark.asyncio
 async def test_rag():
@@ -21,4 +21,4 @@ async def test_rag():
     assert type(result) is AiRagAns
     print("cot", result.cot)
     print("rag", result.rag)
-    print("summary", result.summary)
+    print("answer", result.answer)

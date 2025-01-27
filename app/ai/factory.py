@@ -46,7 +46,7 @@ class BaseChatFactory:
             config={"callbacks":[self.langfuse_handler]}
         )
         _, ai_message = await gather(add_human_message_task, chain_invoke_task)
-        ai_message_summary = ai_message.model_dump().get("summary")
+        ai_message_summary = ai_message.model_dump().get("answer")
         self.history.add_message(AIMessage(content=ai_message_summary, additional_kwargs={'datetime':datetime.now()}))
         return ai_message
 
