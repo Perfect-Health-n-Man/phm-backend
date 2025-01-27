@@ -1,13 +1,17 @@
 from typing import Any
 
+from langchain_community.chat_message_histories import FirestoreChatMessageHistory
+
 from app.chat.chat_repository import get_chat_history
 from app.chat.normal.factory import NormalChatFactory
+
 
 async def store_and_respond_chat(uid:str, user_message: str) -> Any:
     try:
         history = get_chat_history(user_id=uid)
         if history is None:
             raise {'error': 'Failed to initialize chat history'}
+
         normal_chat = NormalChatFactory(history, user_message)
         result = await normal_chat.create_ans()
         return result

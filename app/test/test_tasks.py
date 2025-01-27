@@ -2,22 +2,23 @@ import pytest
 
 from dotenv import load_dotenv
 load_dotenv()
+from google.cloud import firestore
 
 from app.chat.tasks.factory import TasksFactory
 from app.chat.tasks.model import Tasks
-from app.firestore import firestore_service
+from app.chat.chat_repository import get_chat_history
+from app.firestore.firestore_service import get_user
 
 fs_aclient = firestore.AsyncClient()
-doc_ref = firestore_crud.get_user(fs_aclient, "user-id")
+doc_ref = get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
 fs_client = firestore.Client()
-history = firestore_crud.get_chat_history(fs_client, "WH3FePgXPScZGKoJ0qIQ")
+history = get_chat_history("WH3FePgXPScZGKoJ0qIQ")
 
 @pytest.mark.asyncio
 async def test_create_tasks():
-    # history.add_message(HumanMessage(content="私のタスクを考えて"))
     tasks = TasksFactory(doc_ref, history)
     result = await tasks.create_tasks()
     assert type(result) is Tasks
-    # result_dict = result.model_dump()
-    # content = result_dict.get("summary") + "".join(result_dict.get("tasks"))
-    # await history.aadd_messages([AIMessage(content=content)])
+    print("summary", result.summary)
+    print("tasks->")
+    print(*result.tasks, sep="\n")
