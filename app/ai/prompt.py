@@ -15,8 +15,9 @@ def get_prompt_on_startup() -> None:
     lf_client = Langfuse()
     prompt_names = [
         "createDailyTasks",
-        "checkDailyTasks",
+        # "checkDailyTasks",
         "answerQuestions",
+        "selectAgent",
     ]
     for prompt in prompt_names:
         lf_client.get_prompt(name=prompt, label="production")

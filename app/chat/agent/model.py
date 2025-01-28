@@ -1,15 +1,19 @@
 import operator
-from typing import Annotated
+from typing import Annotated, Optional
 
 from pydantic import BaseModel, Field
 
 
+class Response(BaseModel):
+    answer: str = Field(description="Summary of Answers")
+    form: Optional[list[str]] = Field(description="A form to ask questions to users")
+
 class State(BaseModel):
     query: str = Field(..., description="ユーザーからの質問または要望")
     current_agent: str = Field(
-        default="", description="選定されたAIエージェント"
+        default="4", description="選定されたAIエージェント"
     )
-    messages: Annotated[list[str], operator.add] = Field(
+    messages: Annotated[list[Response], operator.add] = Field(
         description="回答履歴"
     )
     current_judge: bool = Field(
