@@ -2,7 +2,7 @@ from quart import request, g
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp
 
-@chat_bp.route('/', methods=['POST'])
+@chat_bp.route('/', methods=['POST'], strict_slashes=False)
 async def handle_chat():
     try:
         data = await request.get_json()
@@ -22,7 +22,7 @@ async def handle_chat():
         return {"error": str(e)}, 500
 
 
-@chat_bp.route('/', methods=['GET'])
+@chat_bp.route('/', methods=['GET'], strict_slashes=False)
 async def get_chat_list():
     try:
         if not hasattr(g, 'user_id'):

@@ -1,7 +1,7 @@
 from quart import request, jsonify, g
 from app.users import users_service, users_bp
 
-@users_bp.route('/info', methods=['POST','PUT'])
+@users_bp.route('/info', methods=['POST','PUT'], strict_slashes=False)
 async def register_or_update_user():
     try:
         user_info = await request.get_json()
@@ -17,7 +17,7 @@ async def register_or_update_user():
         print(e)
         return jsonify({"error": str(e)}), 500
 
-@users_bp.route('/info', methods=['GET'])
+@users_bp.route('/info', methods=['GET'], strict_slashes=False)
 async def get_user_info():
     user_id = g.user_id
     try:
