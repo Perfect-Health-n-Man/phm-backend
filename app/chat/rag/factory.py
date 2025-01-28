@@ -47,7 +47,7 @@ class RagFactory(BaseChatFactory):
             inputs = {
                 "input": self.user_message,
                 "datetimeNow": datetime.now().isoformat(),
-                "chat_history": self.history.messages,
+                "chat_history": self.history.messages[-10:],
                 "question": self.user_message
             },
             add_human_message_task=add_human_message_task
