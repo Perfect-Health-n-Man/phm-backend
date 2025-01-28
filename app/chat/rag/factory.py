@@ -28,7 +28,7 @@ class RagFactory(BaseChatFactory):
             get_extractive_answers=True,
         )
 
-    async def create_ans(self):
+    async def create_ans(self) -> AiRagAns:
         add_human_message_task = self.add_user_message()
 
         chain = (
