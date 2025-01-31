@@ -1,8 +1,8 @@
-from quart import request, g
+from quart import request, g, jsonify
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp
 
-@chat_bp.route('/', methods=['POST'])
+@chat_bp.route('/', methods=['POST'], strict_slashes=False)
 async def handle_chat():
     try:
         data = await request.get_json()
@@ -11,18 +11,20 @@ async def handle_chat():
             return {"error": "user_id or message is empty"}, 400
 
         uid = g.user_id
-
-        ai_response = await store_and_respond_chat(uid, user_message)
+        try:
+            ai_response = await store_and_respond_chat(uid, user_message)
+        except Exception as e:
+            return jsonify({'error': str(e)})
 
         if not ai_response:
             return {"error": "Encountered an internal error while executing the 'store_and_respond_chat' function. "}, 500
-        return {"response": ai_response}, 201
+        return jsonify(ai_response), 201
 
     except Exception as e:
         return {"error": str(e)}, 500
 
 
-@chat_bp.route('/', methods=['GET'])
+@chat_bp.route('/', methods=['GET'], strict_slashes=False)
 async def get_chat_list():
     try:
         if not hasattr(g, 'user_id'):

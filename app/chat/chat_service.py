@@ -5,7 +5,6 @@ from langchain_community.chat_message_histories import FirestoreChatMessageHisto
 from app.chat.chat_repository import get_chat_history
 from app.chat.normal.factory import NormalChatFactory
 
-
 async def store_and_respond_chat(uid:str, user_message: str) -> Any:
     try:
         history = get_chat_history(user_id=uid)
@@ -15,11 +14,13 @@ async def store_and_respond_chat(uid:str, user_message: str) -> Any:
         normal_chat = NormalChatFactory(history, user_message)
         result = await normal_chat.create_ans()
         result_dict = result.model_dump()
-        content = result_dict.get("answer")
-        return content
+
+        answer = result_dict.get('answer')
+        form = result_dict.get('form')
+        return {'answer': answer, 'form': form} if form else {'answer': answer}
+
     except Exception as e:
-        print(f"Error in store_and_respond_chat: {str(e)}")
-        raise
+        raise Exception(f"Error in store_and_respond_chat: {str(e)}")
 
 
 async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | None:
