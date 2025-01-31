@@ -1,9 +1,5 @@
-<<<<<<< Updated upstream
 flask[async]~=3.1.0
 quart
-=======
-Flask[async]~=3.1.0
->>>>>>> Stashed changes
 pre-commit
 black
 python-dotenv==1.0.1
@@ -19,6 +15,7 @@ langchain
 langchain-community~=0.3.14
 langchain-core~=0.3.30
 langchain-google-community
+langchain-google-genai~=2.0.9
 google-cloud-discoveryengine
 
 # langfuse
