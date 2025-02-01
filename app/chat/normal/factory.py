@@ -1,33 +1,25 @@
-from datetime import datetime
-from langchain_community.chat_message_histories import FirestoreChatMessageHistory
-
 from app.ai.factory import BaseChatFactory
 from .model import AiAns
+from ..agent.model import State
+from ..chat_dto import ChatDto
 
 
 class NormalChatFactory(BaseChatFactory):
-    def __init__(self,
-                 history: FirestoreChatMessageHistory,
-                 user_message: str,
-        ) -> None:
-        super().__init__(history, "answerQuestions", AiAns, user_message)
+    def __init__(self) -> None:
+        super().__init__("answerQuestions", AiAns)
 
-    async def create_ans(self) -> AiAns:
-        add_human_message_task = self.add_user_message()
-
+    async def create_ans(self, state: State) -> dict[str, list[ChatDto]]:
         chain = (
             self.prompt
             | self.model.with_structured_output(self.output_parser)
         )
-
-
-        return await self.add_ai_message(
-            chain,
-            inputs = {
-                "datetimeNow": datetime.now().isoformat(),
+        result: AiAns = await chain.ainvoke(
+            input={
+                "datetimeNow": state.datetimeNow,
                 "context": "",
-                "chat_history": self.history.messages[-10:],
-                "question": self.user_message
+                "chat_history": state.history,
+                "question": state.user_message
             },
-            add_human_message_task=add_human_message_task
+            config={"callbacks": [self.langfuse_handler]}
         )
+        return {"messages": [ChatDto(answer=result.answer, form=result.form)]}

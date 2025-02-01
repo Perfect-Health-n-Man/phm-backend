@@ -1,20 +1,20 @@
 import operator
-from typing import Annotated, Optional
+from typing import Annotated
 
 from pydantic import BaseModel, Field
 
+from app.chat.chat_dto import ChatDto
 
-class Response(BaseModel):
-    answer: str = Field(description="Summary of Answers")
-    form: Optional[list[str]] = Field(description="A form to ask questions to users")
 
 class State(BaseModel):
-    query: str = Field(..., description="ユーザーからの質問または要望")
-    current_agent: str = Field(
-        default="4", description="選定されたAIエージェント"
+    user_message: str = Field(..., description="ユーザーからの質問または要望")
+    history: str = Field(..., description="チャット履歴")
+    datetimeNow: str = Field(..., description="現在日時")
+    current_agent: int = Field(
+        default=4, description="選定されたAIエージェント"
     )
-    messages: Annotated[list[Response], operator.add] = Field(
-        description="回答履歴"
+    messages: Annotated[list[ChatDto], operator.add] = Field(
+        default_factory=list, description="回答履歴"
     )
     current_judge: bool = Field(
         default=False, description="品質チェックの結果"
@@ -22,6 +22,12 @@ class State(BaseModel):
     judgement_reason: str = Field(
         default="", description="品質チェックの判定理由"
     )
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
+def to_ai_response(state: State) -> str:
+    return state["messages"][-1]
 
 Agent = {
     "1": {

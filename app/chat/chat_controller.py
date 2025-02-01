@@ -1,4 +1,6 @@
 from quart import request, g, jsonify
+
+from app.chat.chat_dto import ChatDto
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp
 
@@ -14,11 +16,11 @@ async def handle_chat():
         try:
             ai_response = await store_and_respond_chat(uid, user_message)
         except Exception as e:
-            return jsonify({'error': str(e)})
+            return jsonify({'error': str(e)}), 500
 
         if not ai_response:
             return {"error": "Encountered an internal error while executing the 'store_and_respond_chat' function. "}, 500
-        return jsonify(ai_response), 201
+        return ChatDto.from_response(ai_response).to_json(), 201
 
     except Exception as e:
         return {"error": str(e)}, 500

@@ -3,7 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 class SelectAgent(BaseModel):
     cot: str = Field(description="COT thought process")
-    agent_number: str = Field(description="Selected Agent Number")
+    agent_number: int = Field(description="Selected Agent Number")
 
 model = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash-exp",

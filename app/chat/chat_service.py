@@ -1,23 +1,17 @@
-from typing import Any
-
 from langchain_community.chat_message_histories import FirestoreChatMessageHistory
 
+from app.chat.chat_dto import ChatDto
 from app.chat.chat_repository import get_chat_history
 from app.chat.normal.factory import NormalChatFactory
 
-async def store_and_respond_chat(uid:str, user_message: str) -> Any:
+async def store_and_respond_chat(uid:str, user_message: str) -> ChatDto:
     try:
         history = get_chat_history(user_id=uid)
         if history is None:
             raise {'error': 'Failed to initialize chat history'}
 
         normal_chat = NormalChatFactory(history, user_message)
-        result = await normal_chat.create_ans()
-        result_dict = result.model_dump()
-
-        answer = result_dict.get('answer')
-        form = result_dict.get('form')
-        return {'answer': answer, 'form': form} if form else {'answer': answer}
+        return await normal_chat.create_ans()
 
     except Exception as e:
         raise Exception(f"Error in store_and_respond_chat: {str(e)}")

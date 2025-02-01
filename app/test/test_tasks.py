@@ -1,24 +1,31 @@
+from datetime import datetime
+
 import pytest
 
 from dotenv import load_dotenv
+
+from app.chat.agent.model import State
+from app.chat.chat_dto import ChatDto
+
 load_dotenv()
 from google.cloud import firestore
 
 from app.chat.tasks.factory import TasksFactory
-from app.chat.tasks.model import Tasks
 from app.chat.chat_repository import get_chat_history
-from app.firestore.firestore_service import get_user
 
 fs_aclient = firestore.AsyncClient()
-doc_ref = get_user(fs_aclient, "rBHLdsDtxqdrGWkisunX")
-fs_client = firestore.Client()
-history = get_chat_history("juA4InAftSlGy48HObdW")
+state = State(
+    user_message="",
+    history=get_chat_history("juA4InAftSlGy48HObdW").to_history_str(),
+    datetimeNow=datetime.now().isoformat()
+)
 
 @pytest.mark.asyncio
 async def test_create_tasks():
-    tasks = TasksFactory(doc_ref, history)
-    result = await tasks.create_tasks()
-    assert type(result) is Tasks
-    print("answer", result.answer)
+    tasks = TasksFactory(fs_aclient, user_id="rBHLdsDtxqdrGWkisunX")
+    result = await tasks.create_tasks(state)
+    chat_dto = result.get("messages")[-1]
+    assert type(chat_dto) is ChatDto
+    print("answer", chat_dto.answer)
     print("tasks->")
-    print(*result.answer, sep="\n")
+    print(*chat_dto.form, sep="\n")
