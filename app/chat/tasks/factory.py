@@ -1,40 +1,41 @@
-from langchain_community.chat_message_histories import FirestoreChatMessageHistory
-
 from app.ai.factory import BaseChatFactory
 from datetime import datetime
-from google.cloud import firestore
+from google.cloud.firestore import AsyncClient
 
 from .model import Tasks
+from ..agent.model import State
+from ..chat_dto import ChatDto
 
 
 class TasksFactory(BaseChatFactory):
     def __init__(self,
-                 doc_ref: firestore.AsyncDocumentReference,
-                 history: FirestoreChatMessageHistory,
+                 fs_aclient: AsyncClient,
+                 user_id: str,
                  ) -> None:
-        super().__init__(history, "createDailyTasks", Tasks, "タスクを考えて")
-        self.doc_ref = doc_ref
+        super().__init__("createDailyTasks", Tasks)
+        self.fs_aclient = fs_aclient
+        self.user_id = user_id
 
-    async def get_user_info(self) -> dict:
-        user_ref = await self.doc_ref.get()
+    async def get_user_info(self, state: State) -> dict:
+        user_ref = await self.fs_aclient.document("users", self.user_id).get()
         user_info = user_ref.to_dict()["user_info"]
         user_info["datetimeNow"] = datetime.now()
+        user_info["user_message"] = state.user_message
+        user_info["history"] = state.history
         return user_info
 
-    async def create_tasks(self) -> Tasks:
-        get_user_info_task = self.get_user_info()
-        add_human_message_task = self.add_user_message()
-
+    async def create_tasks(self, state: State) -> dict[str, list[ChatDto]]:
+        get_user_info_task = self.get_user_info(state)
         chain = (
                 self.prompt
                 | self.model.with_structured_output(self.output_parser)
         )
         user_info = await get_user_info_task
-        return await self.add_ai_message(
-            chain,
-            inputs=user_info,
-            add_human_message_task=add_human_message_task
+        result: Tasks = chain.invoke(
+            input=user_info,
+            config={"callbacks": [self.langfuse_handler]}
         )
+        return {"messages": [ChatDto(answer=result.answer, form=result.form)]}
 
     def get_tasks(self): ...
 
