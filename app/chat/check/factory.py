@@ -19,4 +19,4 @@ class CheckFactory(BaseChatFactory):
             },
             config={"callbacks": [self.langfuse_handler]}
         )
-        return {"current_judge": result.judge, "judgement_reason": result.judgement_reason}
+        return {"current_judge": result.judge, "judgement_reason": result.reason}

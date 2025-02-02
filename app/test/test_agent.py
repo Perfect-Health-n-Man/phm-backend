@@ -16,12 +16,14 @@ history.clear()
 async def test_root_tasks():
     agent = CreateAgentAnswer(
         history=history,
-        user_message="",
+        user_message="ヘルシーな肉の種類は？",
         fs_aclient=fs_aclient,
         user_id=user_id,
     )
     chat_dto, state = await agent.invoke_graph()
     assert type(chat_dto) is ChatDto
-    assert state["current_agent"] == 1
+    assert state["current_agent"] == 3
+    print("agent_number: ", state["current_agent"])
+    print("answer: ", chat_dto.to_str())
     print("number of check: ", len(state["messages"]))
-    print("judgement_reason: ", state["judgement_reasons"])
+    print("judgement_reason: ", state["judgement_reason"])

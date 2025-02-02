@@ -6,7 +6,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import StateGraph, END
 from langgraph.graph.state import CompiledStateGraph
 
-from .model import State
+from .model import State, to_ai_response
 from app.chat.normal.factory import NormalChatFactory
 from app.chat.rag.factory import RagFactory
 from app.chat.select.factory import SelectAgentFactory
@@ -31,13 +31,21 @@ class CreateAgentAnswer:
         self.user_id = user_id
 
     def _create_graph(self) -> None:
+        select_agent_node = SelectAgentFactory()
+        normal_chat_node = NormalChatFactory()
+        rag_node = RagFactory()
+        task_node = TasksFactory(
+            fs_aclient=self.fs_aclient,
+            user_id=self.user_id
+        )
         check_node = CheckFactory()
+
         workflow = StateGraph(State)
 
-        workflow.add_node("selection", SelectAgentFactory.create_ans)
-        workflow.add_node("normal_chat", NormalChatFactory.create_ans)
-        workflow.add_node("rag", RagFactory.create_ans)
-        workflow.add_node("tasks", TasksFactory(fs_aclient=self.fs_aclient, user_id=self.user_id).create_tasks)
+        workflow.add_node("selection", select_agent_node.create_ans)
+        workflow.add_node("normal_chat", normal_chat_node.create_ans)
+        workflow.add_node("rag", rag_node.create_ans)
+        workflow.add_node("tasks", task_node.create_tasks)
         workflow.add_node("check", check_node.create_ans)
 
         workflow.set_entry_point("selection")
@@ -66,7 +74,10 @@ class CreateAgentAnswer:
 
     async def invoke_graph(self) -> tuple[ChatDto, State]:
         self.history.load_messages()
-        add_human_message_task = self.history.aadd_messages([HumanMessage(content=self.user_message, additional_kwargs={'datetime':datetime.now()})])
+        add_human_message_task = self.history.aadd_messages([HumanMessage(
+            content=self.user_message,
+            additional_kwargs={'datetime':datetime.now()})]
+        )
 
         initial_state = State(
             user_message=self.user_message,
@@ -77,7 +88,10 @@ class CreateAgentAnswer:
         chain_invoke_task = self.compiled.ainvoke(initial_state)
 
         _, result_state = await gather(add_human_message_task, chain_invoke_task)
-        ai_response = result_state.to_ai_response()
+        ai_response = to_ai_response(result_state)
 
-        self.history.add_message(AIMessage(content=ai_response.to_str(), additional_kwargs={'datetime':datetime.now()}))
+        await self.history.aadd_messages([AIMessage(
+            content=ai_response.to_str(),
+            additional_kwargs={'datetime':datetime.now()})]
+        )
         return ai_response, result_state

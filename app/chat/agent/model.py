@@ -26,7 +26,7 @@ class State(BaseModel):
         "arbitrary_types_allowed": True
     }
 
-def to_ai_response(state: State) -> str:
+def to_ai_response(state: State) -> ChatDto:
     return state["messages"][-1]
 
 Agent = {

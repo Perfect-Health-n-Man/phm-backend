@@ -24,6 +24,7 @@ class RagFactory(BaseChatFactory):
             max_documents=2,
             max_extractive_answer_count=3,
             get_extractive_answers=True,
+            beta=True,
         )
 
     async def create_ans(self, state: State) -> dict[str, list[ChatDto]]:
