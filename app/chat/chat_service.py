@@ -1,3 +1,4 @@
+from app.chat import InitializedError, RateLimitError, NoChatsFoundError, APIError
 from app.chat.agent.agent import CreateAgentAnswer
 from app.chat.chat_dto import ChatDto
 from app.chat.chat_repository import get_chat_history
@@ -8,7 +9,7 @@ async def store_and_respond_chat(user_id:str, user_message: str) -> ChatDto:
     try:
         history = get_chat_history(user_id=user_id)
         if history is None:
-            raise {'error': 'Failed to initialize chat history'}
+            raise InitializedError('Failed to initialize chat history')
 
         fs_aclient = client
         agent_chain = CreateAgentAnswer(
@@ -17,11 +18,18 @@ async def store_and_respond_chat(user_id:str, user_message: str) -> ChatDto:
             fs_aclient=fs_aclient,
             user_id=user_id,
         )
-        chat_dto, _ = await agent_chain.invoke_graph()
-        return chat_dto
+        try:
+            chat_dto, _ = await agent_chain.invoke_graph()
+            return chat_dto
+        except Exception as e:
+            if 'ResourceExhausted: 429' in str(e):
+                raise RateLimitError('Rate limit exceeded')
+            raise APIError('unexpected API error')
 
+    except (InitializedError, RateLimitError,APIError) as e:
+        raise
     except Exception as e:
-        raise Exception(f"Error in store_and_respond_chat: {str(e)}")
+        raise Exception(f"Unexpected Error in store_and_respond_chat: {str(e)}")
 
 
 async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | None:
@@ -29,7 +37,7 @@ async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | No
 
         history = get_chat_history(user_id=uid)
         if history is None:
-            raise {'error': 'Failed to initialize chat history'}
+            raise InitializedError('Failed to initialize chat history')
         messages = await history.aget_messages()
 
         filtered_messages = []
@@ -50,12 +58,14 @@ async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | No
         max_pages = (total_messages + limit - 1) // limit
 
         if page > max_pages:
-            return None
+            raise NoChatsFoundError('No chats found for the specified page')
 
         start = (page - 1) * limit
         end = start + limit
 
         return filtered_messages[start:end]
 
-    except Exception:
-        return None
+    except (InitializedError, NoChatsFoundError):
+        raise
+    except Exception as e:
+        raise Exception(f"Failed to retrieve chat history: {str(e)}")

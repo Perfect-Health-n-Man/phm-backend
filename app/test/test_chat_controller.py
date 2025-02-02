@@ -1,41 +1,37 @@
 import pytest
 from unittest.mock import patch, AsyncMock
-from quart import Quart, g
-from app.chat import chat_bp, RateLimitError, NoChatsFoundError, InitializedError
+from quart import g
 
-@pytest.fixture
-def app():
-    app = Quart(__name__)
-    app.register_blueprint(chat_bp)
-    return app
+from app.chat import InitializedError, RateLimitError, NoChatsFoundError, APIError
+from app.chat.chat_dto import ChatDto
 
 
-# POSTエンドポイントのテスト
 @pytest.mark.asyncio
-async def test_handle_chat_success(app):
-    test_response = {'answer': 'test response'}
+async def test_handle_chat_success(app, mock_chat_dto):
     async with app.test_client() as client:
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.store_and_respond_chat',
-                      AsyncMock(return_value=test_response)):
+                      AsyncMock(return_value=mock_chat_dto)):
                 response = await client.post('/', json={'message': 'test'})
                 assert response.status_code == 201
                 response_data = await response.get_json()
-                assert response_data == test_response
+                assert response_data['answer'] == "Test response"
+                assert response_data['form'] == ["form item 1", "form item 2"]
 
 @pytest.mark.asyncio
-async def test_handle_chat_with_form(app):
-    test_response = {'answer': 'test response', 'form': {'field': 'value'}}
+async def test_handle_chat_without_form(app):
+    chat_dto = ChatDto(answer="Test response", form=[])
     async with app.test_client() as client:
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.store_and_respond_chat',
-                      AsyncMock(return_value=test_response)):
+                      AsyncMock(return_value=chat_dto)):
                 response = await client.post('/', json={'message': 'test'})
                 assert response.status_code == 201
                 response_data = await response.get_json()
-                assert 'form' in response_data
+                assert response_data['answer'] == "Test response"
+                assert response_data['form'] == []
 
 @pytest.mark.asyncio
 async def test_handle_chat_missing_user_id(app):
@@ -43,6 +39,8 @@ async def test_handle_chat_missing_user_id(app):
         async with app.app_context():
             response = await client.post('/', json={'message': 'test'})
             assert response.status_code == 400
+            response_data = await response.get_json()
+            assert 'error' in response_data
 
 @pytest.mark.asyncio
 async def test_handle_chat_missing_message(app):
@@ -53,25 +51,34 @@ async def test_handle_chat_missing_message(app):
             assert response.status_code == 400
 
 @pytest.mark.asyncio
-async def test_handle_chat_rate_limit(app):
-    async with app.test_client() as client:
-        async with app.app_context():
-            g.user_id = 'test_user'
-            with patch('app.chat.chat_controller.store_and_respond_chat',
-                      AsyncMock(side_effect=RateLimitError("Rate limit exceeded"))):
-                response = await client.post('/', json={'message': 'test'})
-                assert response.status_code == 429
-
-@pytest.mark.asyncio
 async def test_handle_chat_initialized_error(app):
     async with app.test_client() as client:
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.store_and_respond_chat',
-                      AsyncMock(side_effect=InitializedError("Failed to initialize"))):
+                      AsyncMock(side_effect=InitializedError("Init error"))):
                 response = await client.post('/', json={'message': 'test'})
                 assert response.status_code == 500
 
+@pytest.mark.asyncio
+async def test_handle_chat_rate_limit(app):
+    async with app.test_client() as client:
+        async with app.app_context():
+            g.user_id = 'test_user'
+            with patch('app.chat.chat_controller.store_and_respond_chat',
+                      AsyncMock(side_effect=RateLimitError("Rate limit"))):
+                response = await client.post('/', json={'message': 'test'})
+                assert response.status_code == 429
+
+@pytest.mark.asyncio
+async def test_handle_chat_api_error(app):
+    async with app.test_client() as client:
+        async with app.app_context():
+            g.user_id = 'test_user'
+            with patch('app.chat.chat_controller.store_and_respond_chat',
+                      AsyncMock(side_effect=APIError("API error"))):
+                response = await client.post('/', json={'message': 'test'})
+                assert response.status_code == 500
 
 # GETエンドポイントのテスト
 @pytest.mark.asyncio
@@ -101,7 +108,7 @@ async def test_get_chat_list_not_found(app):
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.get_paginated_chats',
-                      AsyncMock(side_effect=NoChatsFoundError("No chats found"))):
+                      AsyncMock(side_effect=NoChatsFoundError("Not found"))):
                 response = await client.get('/?pages=999')
                 assert response.status_code == 404
 
@@ -111,16 +118,16 @@ async def test_get_chat_list_initialized_error(app):
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.get_paginated_chats',
-                      AsyncMock(side_effect=InitializedError("Failed to initialize"))):
+                      AsyncMock(side_effect=InitializedError("Init error"))):
                 response = await client.get('/?pages=1')
                 assert response.status_code == 500
 
 @pytest.mark.asyncio
-async def test_get_chat_list_general_error(app):
+async def test_get_chat_list_unexpected_error(app):
     async with app.test_client() as client:
         async with app.app_context():
             g.user_id = 'test_user'
             with patch('app.chat.chat_controller.get_paginated_chats',
-                      AsyncMock(side_effect=Exception("Unexpected error"))):
+                      AsyncMock(side_effect=Exception("Unexpected"))):
                 response = await client.get('/?pages=1')
                 assert response.status_code == 500
