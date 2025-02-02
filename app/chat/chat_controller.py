@@ -1,5 +1,4 @@
 from quart import request, g, jsonify
-
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp, InitializedError, RateLimitError, NoChatsFoundError, APIError
 

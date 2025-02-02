@@ -80,6 +80,7 @@ async def test_handle_chat_api_error(app):
                 response = await client.post('/', json={'message': 'test'})
                 assert response.status_code == 500
 
+
 # GETエンドポイントのテスト
 @pytest.mark.asyncio
 async def test_get_chat_list_success(app):
