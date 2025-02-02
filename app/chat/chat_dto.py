@@ -1,7 +1,6 @@
-from pydantic import BaseModel
 from quart import Response, jsonify
 
-class ChatDto():
+class ChatDto:
     answer: str
     form: list[str]
     def __init__(self, answer: str, form: list[str]):

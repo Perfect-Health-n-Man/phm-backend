@@ -1,17 +1,24 @@
-from langchain_community.chat_message_histories import FirestoreChatMessageHistory
-
+from app.chat.agent.agent import CreateAgentAnswer
 from app.chat.chat_dto import ChatDto
 from app.chat.chat_repository import get_chat_history
-from app.chat.normal.factory import NormalChatFactory
+from app.firestore import client
 
-async def store_and_respond_chat(uid:str, user_message: str) -> ChatDto:
+
+async def store_and_respond_chat(user_id:str, user_message: str) -> ChatDto:
     try:
-        history = get_chat_history(user_id=uid)
+        history = get_chat_history(user_id=user_id)
         if history is None:
             raise {'error': 'Failed to initialize chat history'}
 
-        normal_chat = NormalChatFactory(history, user_message)
-        return await normal_chat.create_ans()
+        fs_aclient = client
+        agent_chain = CreateAgentAnswer(
+            history=history,
+            user_message=user_message,
+            fs_aclient=fs_aclient,
+            user_id=user_id,
+        )
+        chat_dto, _ = await agent_chain.invoke_graph()
+        return chat_dto
 
     except Exception as e:
         raise Exception(f"Error in store_and_respond_chat: {str(e)}")
