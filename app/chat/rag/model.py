@@ -8,5 +8,5 @@ class AiRagAns(BaseModel):
     answer: str = Field(description="Summary of Answers")
     form: list[str] = Field(
         default_factory=list,
-        description="The question you want to ask the user if exists"
+        description="The question you want to ask the user if there are two or more"
     )
