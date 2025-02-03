@@ -11,8 +11,9 @@ class TasksFactory(BaseChatFactory):
     def __init__(self,
                  fs_aclient: AsyncClient,
                  user_id: str,
+                 session_id: str,
                  ) -> None:
-        super().__init__("createDailyTasks", Tasks)
+        super().__init__("createDailyTasks", Tasks, session_id)
         self.fs_aclient = fs_aclient
         self.user_id = user_id
 

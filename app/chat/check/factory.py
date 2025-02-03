@@ -3,8 +3,8 @@ from .model import Judgement
 from app.chat.agent.model import State
 
 class CheckFactory(BaseChatFactory):
-    def __init__(self) -> None:
-        super().__init__("checkAnswer", Judgement)
+    def __init__(self, session_id: str) -> None:
+        super().__init__("checkAnswer", Judgement, session_id)
 
     async def create_ans(self, state: State) -> dict[str, str | bool]:
         chain = (

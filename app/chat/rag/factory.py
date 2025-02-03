@@ -16,8 +16,8 @@ def format_docs(docs):
 
 class RagFactory(BaseChatFactory):
     retriever: VertexAISearchRetriever
-    def __init__(self) -> None:
-        super().__init__("answerQuestions", AiRagAns)
+    def __init__(self, session_id: str) -> None:
+        super().__init__("answerQuestions", AiRagAns, session_id)
         self.retriever = VertexAISearchRetriever(
             project_id=os.getenv("PROJECT_ID"),
             data_store_id=os.getenv("DATA_STORE_ID"),

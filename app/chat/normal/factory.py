@@ -5,8 +5,8 @@ from ..chat_dto import ChatDto
 
 
 class NormalChatFactory(BaseChatFactory):
-    def __init__(self) -> None:
-        super().__init__("answerQuestions", AiAns)
+    def __init__(self, session_id: str) -> None:
+        super().__init__("answerQuestions", AiAns, session_id)
 
     async def create_ans(self, state: State) -> dict[str, list[ChatDto]]:
         chain = (
