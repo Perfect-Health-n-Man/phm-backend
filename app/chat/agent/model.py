@@ -33,7 +33,7 @@ def to_ai_response(state: State) -> ChatDto:
 Agent = {
     "1": {
         "name": "タスク作成エージェント",
-        "description": "日々のタスクを作成及びデータベースに登録します。",
+        "description": "日々のタスクを作成及びデータベースに登録します。タスクが存在しない場合は必ずこの選択肢を選びます。",
     },
     "2": {
         "name": "データCRUDエージェント",
