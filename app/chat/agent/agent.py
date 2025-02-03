@@ -1,3 +1,4 @@
+import uuid
 from asyncio import gather
 from datetime import datetime
 
@@ -31,14 +32,16 @@ class CreateAgentAnswer:
         self.user_id = user_id
 
     def _create_graph(self) -> None:
-        select_agent_node = SelectAgentFactory()
-        normal_chat_node = NormalChatFactory()
-        rag_node = RagFactory()
+        session_id = str(uuid.uuid4())
+        select_agent_node = SelectAgentFactory(session_id)
+        normal_chat_node = NormalChatFactory(session_id)
+        rag_node = RagFactory(session_id)
         task_node = TasksFactory(
             fs_aclient=self.fs_aclient,
-            user_id=self.user_id
+            user_id=self.user_id,
+            session_id=session_id,
         )
-        check_node = CheckFactory()
+        check_node = CheckFactory(session_id)
 
         workflow = StateGraph(State)
 
@@ -82,7 +85,8 @@ class CreateAgentAnswer:
         initial_state = State(
             user_message=self.user_message,
             history=self.history.to_history_str(),
-            datetimeNow=datetime.now().isoformat()
+            datetimeNow=datetime.now().isoformat(),
+            session_id=uuid.uuid4().hex,
         )
         self._create_graph()
         chain_invoke_task = self.compiled.ainvoke(initial_state)

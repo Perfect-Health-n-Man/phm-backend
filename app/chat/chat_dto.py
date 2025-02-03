@@ -14,4 +14,4 @@ class ChatDto:
         })
 
     def to_str(self) -> str:
-        return f"answer: {self.answer}\n\n" + "\n".join([f"{str(i + 1)}. {s}" for i, s in enumerate(self.form)])
+        return f"{self.answer}\n\n" + "\n".join([f"{str(i + 1)}. {s}" for i, s in enumerate(self.form)])

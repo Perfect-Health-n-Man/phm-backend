@@ -22,6 +22,7 @@ class State(BaseModel):
     judgement_reason: str = Field(
         default="", description="品質チェックの判定理由"
     )
+    session_id: str = Field(description="Langfuse 用 session ID")
     model_config = {
         "arbitrary_types_allowed": True
     }

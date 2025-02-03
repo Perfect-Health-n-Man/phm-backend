@@ -9,9 +9,10 @@ class BaseChatFactory:
             self,
             prompt_name: str,
             output_parser,
+            session_id: str,
         ):
         self.prompt = self.get_prompt(prompt_name)
-        model, langfuse_handler = get_llm_model_and_callback()
+        model, langfuse_handler = get_llm_model_and_callback(session_id=session_id)
         self.model = model
         self.output_parser = output_parser
         self.langfuse_handler = langfuse_handler
