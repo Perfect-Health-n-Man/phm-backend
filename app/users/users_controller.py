@@ -22,7 +22,11 @@ async def get_user_info():
     user_id = g.user_id
     try:
         user = await users_service.get_user(user_id)
-        return jsonify(user.to_dict()), 200
+        if user is not None:
+            return jsonify(user.to_dict()), 200
+        else:
+            return jsonify({"message": "User not found"}), 404
+
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

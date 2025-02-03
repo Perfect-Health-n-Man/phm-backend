@@ -5,17 +5,17 @@ async def get_user(user_id: str) -> User | None:
     client = firestore_async.client()
     print(user_id)
     user_data = await client.collection("users").document(user_id).get()
-    user_data = user_data.to_dict()
-    print(user_data)
-    if user_data is None: return None
+    if user_data.exists is False: return None
+    user = user_data.to_dict()
+    user_info = user["user_info"]
     return User(
-        name=user_data["name"],
-        email=user_data["email"],
-        gender=user_data["gender"],
-        birthday=user_data["birthday"],
-        height=user_data["height"],
-        weight=user_data["weight"],
-        goals=user_data["goals"]
+        name=user_info["name"],
+        email=user_info["email"],
+        gender=user_info["gender"],
+        birthday=user_info["birthday"],
+        height=user_info["height"],
+        weight=user_info["weight"],
+        goals=user_info["goals"]
     )
 
 async def register_user(user: User):

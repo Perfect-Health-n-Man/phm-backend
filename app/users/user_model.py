@@ -18,15 +18,16 @@ class User:
 
     def to_dict(self):
         return {
-            "name": self.name,
-            "email": self.email,
-            "gender": self.gender,
-            "birthday": self.birthday,
-            "height": self.height,
-            "weight": self.weight,
-            "goals": self.goals,
+            "user_info": {
+                "name": self.name,
+                "email": self.email,
+                "gender": self.gender,
+                "birthday": self.birthday,
+                "height": self.height,
+                "weight": self.weight,
+                "goals": self.goals,
+            }
         }
-
     @staticmethod
     def from_json(json):
         return User(
