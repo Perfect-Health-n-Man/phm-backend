@@ -1,3 +1,4 @@
+from app.chat.tasks.tasks_service import create_empty_tasks
 from app.users import users_repository
 from app.users.user_model import User
 
@@ -8,6 +9,7 @@ async def register_or_update_user(user: dict) -> None:
         await users_repository.update_user(User.from_json(user))
     else:
         await users_repository.register_user(User.from_json(user))
+        await create_empty_tasks(user['email'])
 
 async def get_user(user_id: str) -> User | None:
     return await users_repository.get_user(user_id)

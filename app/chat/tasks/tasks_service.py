@@ -16,3 +16,8 @@ async def get_tasks(user_id: str) -> list | None:
         raise e
     except Exception as e:
         raise e
+
+async def create_empty_tasks(user_id: str) -> None:
+    client = firestore_async.client()
+    doc_ref = client.collection('users').document(user_id)
+    await doc_ref.set({'tasks': []}, merge=True)
