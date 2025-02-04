@@ -14,14 +14,16 @@ from app.chat.chat_repository import get_chat_history
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_select_agent():
-    user_info, task = await get_user_info_and_tasks("WH3FePgXPScZGKoJ0qIQ")
+    user_id = "WH3FePgXPScZGKoJ0qIQ"
+    user_info, task = await get_user_info_and_tasks(user_id)
     state = State(
         user_message="ニックネームを変更したい",
         history=get_chat_history("WH3FePgXPScZGKoJ0qIQ").to_history_str(),
         datetimeNow=datetime.now().isoformat(),
         tasks=task,
         user_info=user_info,
-        session_id="test_selection"
+        session_id="test_selection",
+        user_id=user_id
     )
     selection = SelectAgentFactory(session_id="test_selection")
     result = await selection.create_ans(state)

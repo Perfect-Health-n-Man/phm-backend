@@ -1,4 +1,8 @@
+from typing import Any
+
 from firebase_admin import firestore_async
+from google.cloud.firestore_v1 import AsyncDocumentReference
+
 from app.users.user_model import User
 
 async def get_user(user_id: str) -> User | None:
@@ -18,7 +22,7 @@ async def get_user(user_id: str) -> User | None:
         goals=user_info["goals"]
     )
 
-async def register_user(user: User):
+async def register_user(user: User) -> tuple[Any, AsyncDocumentReference]:
     client = firestore_async.client()
     return await client.collection("users").add(user.to_dict(), document_id=user.email)
 
