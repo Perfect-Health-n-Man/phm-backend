@@ -18,7 +18,9 @@ class NormalChatFactory(BaseChatFactory):
                 "datetimeNow": state.datetimeNow,
                 "context": "",
                 "chat_history": state.history,
-                "question": state.user_message
+                "user_message": state.user_message,
+                "user_info": state.user_info,
+                "tasks": state.tasks,
             },
             config={"callbacks": [self.langfuse_handler]}
         )

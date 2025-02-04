@@ -18,7 +18,9 @@ class SelectAgentFactory(BaseChatFactory):
             input={
                 "agent_options": agent_options,
                 "chat_history": state.history,
-                "user_message": state.user_message
+                "user_message": state.user_message,
+                "tasks": state.tasks,
+                "user_info": state.user_info,
             },
             config={"callbacks": [self.langfuse_handler]}
         )
