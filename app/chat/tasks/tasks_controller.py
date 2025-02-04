@@ -6,9 +6,8 @@ from app.chat.tasks.tasks_service import get_tasks
 @task_bp.route('/', methods=['GET'],strict_slashes=False)
 async def return_tasks_list():
     try:
-        user_id = g.user.id
+        user_id = g.user_id
         tasks = await get_tasks(user_id)
-        print(tasks)
         return jsonify(tasks=tasks)
     except NoTasksFoundError as e:
         return jsonify({'error': str(e)}),404
