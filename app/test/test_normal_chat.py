@@ -14,7 +14,8 @@ from app.chat.chat_repository import get_chat_history
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_create_chat():
-    user_info, task = await get_user_info_and_tasks("juA4InAftSlGy48HObdW")
+    user_id = "juA4InAftSlGy48HObdW"
+    user_info, task = await get_user_info_and_tasks(user_id)
     state = State(
         user_message="",
         history=get_chat_history("juA4InAftSlGy48HObdW").to_history_str(),
@@ -22,6 +23,7 @@ async def test_create_chat():
         tasks=task,
         user_info=user_info,
         session_id="test_normal_chat",
+        user_id=user_id
     )
     normal_chat = NormalChatFactory(session_id="test_normal_chat",)
     result = await normal_chat.create_ans(state)

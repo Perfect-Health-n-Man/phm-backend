@@ -88,6 +88,7 @@ class CreateAgentAnswer:
             user_info=user_info,
             tasks=tasks,
             session_id=uuid.uuid4().hex,
+            user_id=self.user_id,
         )
         self._create_graph()
         chain_invoke_task = self.compiled.ainvoke(initial_state)
