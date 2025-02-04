@@ -15,6 +15,7 @@ from app.chat.tasks.factory import TasksFactory
 from app.chat.check.factory import CheckFactory
 from ..chat_dto import ChatDto
 from ..chat_repository import FirestoreChatMessageHistory
+from ...firestore.firestore_service import get_user_info_and_tasks
 
 
 class CreateAgentAnswer:
@@ -36,56 +37,56 @@ class CreateAgentAnswer:
         select_agent_node = SelectAgentFactory(session_id)
         normal_chat_node = NormalChatFactory(session_id)
         rag_node = RagFactory(session_id)
-        task_node = TasksFactory(
-            fs_aclient=self.fs_aclient,
-            user_id=self.user_id,
-            session_id=session_id,
-        )
+        task_node = TasksFactory(session_id)
         check_node = CheckFactory(session_id)
 
         workflow = StateGraph(State)
 
-        workflow.add_node("selection", select_agent_node.create_ans)
-        workflow.add_node("normal_chat", normal_chat_node.create_ans)
-        workflow.add_node("rag", rag_node.create_ans)
-        workflow.add_node("tasks", task_node.create_tasks)
-        workflow.add_node("check", check_node.create_ans)
+        workflow.add_node("selection_node", select_agent_node.create_ans)
+        workflow.add_node("normal_chat_node", normal_chat_node.create_ans)
+        workflow.add_node("rag_node", rag_node.create_ans)
+        workflow.add_node("tasks_node", task_node.create_tasks)
+        workflow.add_node("check_node", check_node.create_ans)
 
-        workflow.set_entry_point("selection")
+        workflow.set_entry_point("selection_node")
         workflow.add_conditional_edges(
-            "selection",
+            "selection_node",
             lambda state: state.current_agent,
             {
-                1: "tasks",
+                1: "tasks_node",
                 # 2: "",
-                3: "rag",
-                4: "normal_chat",
+                3: "rag_node",
+                4: "normal_chat_node",
             }
         )
-        workflow.add_edge("normal_chat", "check")
-        workflow.add_edge("rag", "check")
-        workflow.add_edge("tasks", "check")
+        workflow.add_edge("normal_chat_node", "check_node")
+        workflow.add_edge("rag_node", "check_node")
+        workflow.add_edge("tasks_node", "check_node")
         workflow.add_conditional_edges(
-            "check",
+            "check_node",
             lambda state: state.current_judge,
             {
                 True: END,
-                False: "selection"
+                False: "selection_node"
             }
         )
         self.compiled = workflow.compile()
 
     async def invoke_graph(self) -> tuple[ChatDto, State]:
+        get_user_info_and_tasks_task = get_user_info_and_tasks(self.user_id)
         self.history.load_messages()
         add_human_message_task = self.history.aadd_messages([HumanMessage(
             content=self.user_message,
             additional_kwargs={'datetime':datetime.now()})]
         )
 
+        user_info, tasks = await get_user_info_and_tasks_task
         initial_state = State(
             user_message=self.user_message,
             history=self.history.to_history_str(),
             datetimeNow=datetime.now().isoformat(),
+            user_info=user_info,
+            tasks=tasks,
             session_id=uuid.uuid4().hex,
         )
         self._create_graph()

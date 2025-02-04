@@ -10,17 +10,23 @@ class State(BaseModel):
     user_message: str = Field(..., description="ユーザーからの質問または要望")
     history: str = Field(..., description="チャット履歴")
     datetimeNow: str = Field(..., description="現在日時")
+    tasks: str = Field(..., description="日々こなすタスク")
+    user_info: str = Field(..., description="ユーザー情報")
     current_agent: int = Field(
-        default=4, description="選定されたAIエージェント"
+        default=4,
+        description="選定されたAIエージェント"
     )
     messages: Annotated[list[ChatDto], operator.add] = Field(
-        default_factory=list, description="回答履歴"
+        default_factory=list,
+        description="回答履歴"
     )
     current_judge: bool = Field(
-        default=False, description="品質チェックの結果"
+        default=False,
+        description="品質チェックの結果"
     )
     judgement_reason: str = Field(
-        default="", description="品質チェックの判定理由"
+        default="",
+        description="品質チェックの判定理由"
     )
     session_id: str = Field(description="Langfuse 用 session ID")
     model_config = {
@@ -33,7 +39,7 @@ def to_ai_response(state: State) -> ChatDto:
 Agent = {
     "1": {
         "name": "タスク作成エージェント",
-        "description": "日々のタスクを作成及びデータベースに登録します。",
+        "description": "日々のタスクを作成及びデータベースに登録します。タスクが存在しない場合は必ずこの選択肢を選びます。",
     },
     "2": {
         "name": "データCRUDエージェント",

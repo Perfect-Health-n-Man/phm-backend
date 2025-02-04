@@ -31,7 +31,7 @@ class RagFactory(BaseChatFactory):
         chain = (
                 RunnablePassthrough.assign(
                     context=
-                    (lambda x: x["question"])
+                    (lambda x: x["user_message"])
                     | self.retriever
                     | format_docs
                 )
@@ -43,7 +43,9 @@ class RagFactory(BaseChatFactory):
                 "input": state.user_message,
                 "datetimeNow": datetime.now().isoformat(),
                 "chat_history": state.history,
-                "question": state.user_message
+                "user_message": state.user_message,
+                "user_info": state.user_info,
+                "tasks": state.tasks,
             },
             config={"callbacks": [self.langfuse_handler]}
         )

@@ -14,7 +14,7 @@ class CheckFactory(BaseChatFactory):
         result: Judgement = chain.invoke(
             input={
                 "chat_history": state.history,
-                "question": state.user_message,
+                "user_message": state.user_message,
                 "answer": state.messages[-1].to_str(),
             },
             config={"callbacks": [self.langfuse_handler]}
