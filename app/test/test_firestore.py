@@ -15,7 +15,14 @@ def test_get_chat_history():
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_document_to_string():
-    today = "2025-02-03"
+    # today = "2025-02-04"
+    # data = {
+    #     "diary": "test",
+    #     "meals": dict(),
+    #     "sleep": dict(),
+    #     "exercises": dict(),
+    # }
+    # await fs_aclient.document("users", "eQdM5ep94sAYAJf5wv0d", "daily_logs", today).create(data)
     today_log = await fs_aclient.document("users", "eQdM5ep94sAYAJf5wv0d", "daily_logs", today).get()
     log_dict = today_log.to_dict()
     assert log_dict["diary"] == "test"

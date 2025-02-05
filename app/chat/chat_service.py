@@ -5,7 +5,7 @@ from app.chat.chat_repository import get_chat_history
 from app.firestore import client
 
 
-async def store_and_respond_chat(user_id:str, user_message: str) -> ChatDto:
+async def store_and_respond_chat(user_id:str, user_message: str, add_user_message: bool) -> ChatDto:
     try:
         history = get_chat_history(user_id=user_id)
         if history is None:
@@ -19,7 +19,7 @@ async def store_and_respond_chat(user_id:str, user_message: str) -> ChatDto:
             user_id=user_id,
         )
         try:
-            chat_dto, _ = await agent_chain.invoke_graph()
+            chat_dto, _ = await agent_chain.invoke_graph(add_user_message)
             return chat_dto
         except Exception as e:
             if 'ResourceExhausted: 429' in str(e):

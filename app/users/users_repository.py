@@ -1,14 +1,12 @@
 from typing import Any
 
-from firebase_admin import firestore_async
 from google.cloud.firestore_v1 import AsyncDocumentReference
 
+from app.firestore import client
 from app.users.user_model import User
 
 async def get_user(user_id: str) -> User | None:
-    client = firestore_async.client()
-    print(user_id)
-    user_data = await client.collection("users").document(user_id).get()
+    user_data = await client.document("users", user_id).get()
     if user_data.exists is False: return None
     user = user_data.to_dict()
     user_info = user["user_info"]
@@ -23,9 +21,7 @@ async def get_user(user_id: str) -> User | None:
     )
 
 async def register_user(user: User) -> tuple[Any, AsyncDocumentReference]:
-    client = firestore_async.client()
     return await client.collection("users").add(user.to_dict(), document_id=user.email)
 
 async def update_user(user: User):
-    client = firestore_async.client()
-    return await client.collection("users").document(user.email).update(user.to_dict())
+    return await client.document("users", user.email).update(user.to_dict())

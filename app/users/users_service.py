@@ -10,8 +10,8 @@ async def register_or_update_user(user: dict) -> None:
         await users_repository.update_user(User.from_json(user))
     else:
         _, doc_ref = await users_repository.register_user(User.from_json(user))
-        await create_empty_tasks(user['email'])
-        await store_and_respond_chat(doc_ref.id, "タスク作成のために必要な質問をしてください。")
+        await create_empty_tasks(doc_ref.id)
+        await store_and_respond_chat(doc_ref.id, "タスクを作成してください。必要な情報があれば聞いてください。", False)
 
 async def get_user(user_id: str) -> User | None:
     return await users_repository.get_user(user_id)

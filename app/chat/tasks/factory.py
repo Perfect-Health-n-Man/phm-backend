@@ -25,7 +25,7 @@ class TasksFactory(BaseChatFactory):
             config={"callbacks": [self.langfuse_handler]}
         )
         if result.decided_tasks:
-            doc_ref = client.document("users/" + "testy@example.com")
+            doc_ref = client.document("users/" + state.user_id)
             await doc_ref.update({"tasks": result.tasks})
             return {"messages": [ChatDto(
                 answer=f"{result.answer}\n\n" + "\n".join([f"{str(i + 1)}. {s}" for i, s in enumerate(result.tasks)]),

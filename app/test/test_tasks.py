@@ -37,9 +37,9 @@ async def test_create_tasks():
     print("tasks->")
     print(*chat_dto.form, sep="\n")
 
-# @pytest.mark.asyncio(loop_scope="session")
-# async def test_update_firestore():
-    # a = await fs_aclient.document("users"+"/testy@example.com").get()
-    # print(a.to_dict())
-    # doc_ref = fs_aclient.document("users/" + "testy@example.com")
-    # await doc_ref.update({"tasks": ["test", "test2"]})
+@pytest.mark.asyncio(loop_scope="session")
+async def test_update_firestore():
+    a = await fs_aclient.document("users"+"/testy@example.com").get()
+    print(a.to_dict())
+    doc_ref = fs_aclient.document("users/" + "testy@example.com")
+    await doc_ref.update({"tasks": ["test", "test2"]})
