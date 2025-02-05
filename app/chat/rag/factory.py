@@ -42,10 +42,11 @@ class RagFactory(BaseChatFactory):
             input={
                 "input": state.user_message,
                 "datetimeNow": datetime.now().isoformat(),
-                "chat_history": state.history,
+                "chat_history": "",#RAGのときはhistoryを読まない
                 "user_message": state.user_message,
                 "user_info": state.user_info,
                 "tasks": state.tasks,
+                "daily_logs": "",
             },
             config={"callbacks": [self.langfuse_handler]}
         )

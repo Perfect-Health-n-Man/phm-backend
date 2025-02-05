@@ -2,7 +2,7 @@ from langchain_community.chat_message_histories import FirestoreChatMessageHisto
 
 class FirestoreChatMessageHistory(History) :
     def to_history_str(self) -> str:
-        history_list = ["'"+message.type+"': "+message.content for message in self.messages[-10:]]
+        history_list = ["'"+message.type+"': "+message.content for message in self.messages[-6:]]
         return "\n".join(history_list)
 
 def get_chat_history(user_id: str) -> FirestoreChatMessageHistory:

@@ -1,4 +1,4 @@
-from quart import request, g, jsonify
+from quart import request, g
 from app.chat.chat_service import store_and_respond_chat, get_paginated_chats
 from app.chat import chat_bp, InitializedError, RateLimitError, NoChatsFoundError, APIError
 
@@ -13,7 +13,7 @@ async def handle_chat():
 
         user_id = g.user_id
         try:
-            ai_response = await store_and_respond_chat(user_id, user_message)
+            ai_response = await store_and_respond_chat(user_id, user_message, True)
             return ai_response.to_json(), 201
         except InitializedError as e:
             return {"error": str(e)}, 500

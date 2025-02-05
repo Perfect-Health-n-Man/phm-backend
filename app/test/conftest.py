@@ -27,11 +27,11 @@ def mock_history():
             additional_kwargs={"datetime": "2024-01-01"}
         )
     ]
-    history.messages = messages[-10:]
+    history.messages = messages[-6:]
 
     # to_history_strメソッドの設定
     history.to_history_str.return_value = "\n".join(
-        [f"'{msg.type}': {msg.content}" for msg in messages[-10:]]
+        [f"'{msg.type}': {msg.content}" for msg in messages[-6:]]
     )
 
     # aget_messagesメソッドの設定
