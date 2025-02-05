@@ -4,8 +4,8 @@ from app.chat.select.model import SelectAgent, get_one_token_model
 
 
 class SelectAgentFactory(BaseChatFactory):
-    def __init__(self) -> None:
-        super().__init__("selectAgent", SelectAgent)
+    def __init__(self, session_id: str) -> None:
+        super().__init__("selectAgent", SelectAgent, session_id)
         self.model = get_one_token_model()
 
     async def create_ans(self, state: State) -> dict[str, int]:
@@ -18,7 +18,9 @@ class SelectAgentFactory(BaseChatFactory):
             input={
                 "agent_options": agent_options,
                 "chat_history": state.history,
-                "question": state.user_message
+                "user_message": state.user_message,
+                "tasks": state.tasks,
+                "user_info": state.user_info,
             },
             config={"callbacks": [self.langfuse_handler]}
         )

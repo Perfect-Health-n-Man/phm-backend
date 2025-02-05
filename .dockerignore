@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI
+cloud-build/*
+
+# Docker
+docker-compose.yml
+Dockerfile
+.docker
+.dockerignore
+devcontainer.json
+
+# Byte-compiled / optimized / DLL files
+**/__pycache__/
+
+# Unit test / coverage reports
+.cache
+
+# PyBuilder
+target/
+
+# Virtual environment
+.env
+.venv/
+venv/
+
+# PyCharm
+.idea
+
+# Python mode for VIM
+.ropeproject
+**/.ropeproject
+
+# Vim swap files
+**/*.swp
+
+# VS Code
+.vscode/

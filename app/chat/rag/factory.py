@@ -16,8 +16,8 @@ def format_docs(docs):
 
 class RagFactory(BaseChatFactory):
     retriever: VertexAISearchRetriever
-    def __init__(self) -> None:
-        super().__init__("answerQuestions", AiRagAns)
+    def __init__(self, session_id: str) -> None:
+        super().__init__("answerQuestions", AiRagAns, session_id)
         self.retriever = VertexAISearchRetriever(
             project_id=os.getenv("PROJECT_ID"),
             data_store_id=os.getenv("DATA_STORE_ID"),
@@ -31,7 +31,7 @@ class RagFactory(BaseChatFactory):
         chain = (
                 RunnablePassthrough.assign(
                     context=
-                    (lambda x: x["question"])
+                    (lambda x: x["user_message"])
                     | self.retriever
                     | format_docs
                 )
@@ -42,8 +42,11 @@ class RagFactory(BaseChatFactory):
             input={
                 "input": state.user_message,
                 "datetimeNow": datetime.now().isoformat(),
-                "chat_history": state.history,
-                "question": state.user_message
+                "chat_history": "",#RAGのときはhistoryを読まない
+                "user_message": state.user_message,
+                "user_info": state.user_info,
+                "tasks": state.tasks,
+                "daily_logs": "",
             },
             config={"callbacks": [self.langfuse_handler]}
         )
