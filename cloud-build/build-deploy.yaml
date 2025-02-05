@@ -1,6 +1,5 @@
 steps:
   - id: "Build container"
-    dir: "/"
     name: "gcr.io/cloud-builders/docker"
     args:
         - "build"
@@ -23,14 +22,12 @@ steps:
         - "."
 
   - id: "Push container to Artifact registry"
-    dir: "/"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia-northeast1-docker.pkg.dev/${PROJECT_ID}/phm/backend:latest"
 
   - id: "Deploy to Cloud Run"
-    dir: "/"
     name: "gcr.io/cloud-builders/gcloud"
     args:
       - "run"
