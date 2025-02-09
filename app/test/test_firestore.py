@@ -15,9 +15,9 @@ def test_get_chat_history():
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_document_to_string():
-    # today = "2025-02-04"
+    today = "2025-02-04"
     # data = {
-    #     "diary": "test",
+    #     "diary": "",
     #     "meals": dict(),
     #     "sleep": dict(),
     #     "exercises": dict(),

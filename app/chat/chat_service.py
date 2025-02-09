@@ -32,10 +32,10 @@ async def store_and_respond_chat(user_id:str, user_message: str, add_user_messag
         raise Exception(f"Unexpected Error in store_and_respond_chat: {str(e)}")
 
 
-async def get_paginated_chats(uid: str, page: int, limit: int = 10) -> list | None:
+async def get_paginated_chats(user_id: str, page: int, limit: int = 10) -> list | None:
     try:
 
-        history = get_chat_history(user_id=uid)
+        history = get_chat_history(user_id)
         if history is None:
             raise InitializedError('Failed to initialize chat history')
         messages = await history.aget_messages()

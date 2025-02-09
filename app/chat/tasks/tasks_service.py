@@ -1,11 +1,9 @@
-from firebase_admin import firestore_async
-
 from app.chat.tasks import NoTasksFoundError
+from app.firestore import client
 
 
 async def get_tasks(user_id: str) -> list | None:
     try:
-        client = firestore_async.client()
         user_data = await client.collection("users").document(user_id).get()
         user = user_data.to_dict()
         tasks = user.get("tasks")
@@ -18,6 +16,5 @@ async def get_tasks(user_id: str) -> list | None:
         raise e
 
 async def create_empty_tasks(user_id: str) -> None:
-    client = firestore_async.client()
     doc_ref = client.collection('users').document(user_id)
     await doc_ref.set({'tasks': []}, merge=True)
