@@ -84,7 +84,7 @@ class CreateAgentAnswer:
         if doc_ref.to_dict():
             return await asyncio.sleep(0.1)
         data = {
-            "diary": "",
+            "diary": ""
             "meals": dict(),
             "sleep": dict(),
             "exercises": dict(),

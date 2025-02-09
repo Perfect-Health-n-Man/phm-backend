@@ -1,5 +1,3 @@
-
-
 from app.chat.tasks import NoTasksFoundError
 from app.firestore import client
 
