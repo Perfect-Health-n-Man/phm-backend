@@ -44,7 +44,7 @@ async def test_data_c():
         user_id=user_id
     )
     data = {
-        "diary": "test",
+        "diary": "",
         "meals": dict(),
         "sleep": dict(),
         "exercises": dict(),

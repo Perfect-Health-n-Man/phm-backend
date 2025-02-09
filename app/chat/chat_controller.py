@@ -33,12 +33,12 @@ async def get_chat_list():
     try:
         if not hasattr(g, 'user_id'):
             return {"error": "user_id is empty"}, 400
-        uid = g.user_id
+        user_id = g.user_id
         page = request.args.get('pages', default=1, type=int)
         limit = 10
 
         try:
-            chats_list = await get_paginated_chats(uid, page, limit)
+            chats_list = await get_paginated_chats(user_id, page, limit)
             return {"page": page, "chats": chats_list}, 200
         except InitializedError as e:
             return {"error": str(e)}, 500
