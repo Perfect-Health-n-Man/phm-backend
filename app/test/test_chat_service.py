@@ -27,7 +27,7 @@ async def test_store_and_respond_chat_success(mock_history):
             'user_message': 'test message'
         })
 
-        result = await store_and_respond_chat("test_user", "test message")
+        result = await store_and_respond_chat("test_user", "test message", False)
         assert isinstance(result, ChatDto)
         assert result.answer == "Test response"
 
@@ -35,7 +35,7 @@ async def test_store_and_respond_chat_success(mock_history):
 async def test_store_and_respond_chat_initialized_error():
     with patch('app.chat.chat_service.get_chat_history', return_value=None):
         with pytest.raises(InitializedError):
-            await store_and_respond_chat("test_user", "test message")
+            await store_and_respond_chat("test_user", "test message", False)
 
 
 @pytest.mark.asyncio
@@ -49,7 +49,7 @@ async def test_store_and_respond_chat_rate_limit(mock_history):
         mock_agent_class.return_value = mock_agent_instance
 
         with pytest.raises(RateLimitError):
-            await store_and_respond_chat("test_user", "test message")
+            await store_and_respond_chat("test_user", "test message", False)
 
 
 @pytest.mark.asyncio
@@ -62,7 +62,7 @@ async def test_store_and_respond_chat_api_error(mock_history):
         mock_agent_class.return_value = mock_agent_instance
 
         with pytest.raises(APIError):
-            await store_and_respond_chat("test_user", "test message")
+            await store_and_respond_chat("test_user", "test message", False)
 
 # get_paginated_chatsのテスト
 @pytest.mark.asyncio
